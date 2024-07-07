@@ -2,7 +2,7 @@ import sys
 import os
 from datetime import datetime
 from PySide6.QtWidgets import QApplication, QWidget, QLabel, QTextEdit, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton
-from PySide6.QtGui import QIcon, QFont
+from PySide6.QtGui import QIcon, QFont, QClipboard
 from PySide6.QtCore import Qt
 
 def resource_path(relative_path):
@@ -64,17 +64,31 @@ class MainWindow(QWidget):
         # Add the horizontal layout to the main layout
         main_layout.addLayout(textboxes_layout)
 
+        # Create a horizontal layout for the buttons
+        buttons_layout = QHBoxLayout()
+
         # Add a button to process the input
-        self.process_button = QPushButton("Generate")
+        self.process_button = QPushButton("Generate Pulse")
         self.process_button.setMinimumSize(200, 50)  # Set the minimum size for the button
 
         # Set a larger font for the button text
         button_font = QFont()
         button_font.setPointSize(14)  # Set the desired font size for the button
         self.process_button.setFont(button_font)
-
         self.process_button.clicked.connect(self.process_input)
-        main_layout.addWidget(self.process_button, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # Add a button to copy the output text
+        self.copy_button = QPushButton("Copy Output")
+        self.copy_button.setMinimumSize(200, 50)  # Set the minimum size for the button
+        self.copy_button.setFont(button_font)  # Set the same font for consistency
+        self.copy_button.clicked.connect(self.copy_output)
+
+        # Add buttons to the buttons layout
+        buttons_layout.addWidget(self.process_button)
+        buttons_layout.addWidget(self.copy_button)
+
+        # Add the buttons layout to the main layout
+        main_layout.addLayout(buttons_layout)
 
         # Add another spacer to push the text boxes up from the bottom
         main_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
@@ -116,8 +130,20 @@ class MainWindow(QWidget):
         # Prepend the header to the output text
         output_text = header + output_text
 
+        # Add total tasks scheduled
+        total_tasks = len(task_counts)
+        output_text += f"\nTotal Tasks Scheduled: {total_tasks}"
+
         # Set the output text
         self.output_textbox.setPlainText(output_text)
+
+    def copy_output(self):
+        # Get the text from the output text box
+        output_text = self.output_textbox.toPlainText()
+
+        # Copy the text to the clipboard
+        clipboard = QApplication.clipboard()
+        clipboard.setText(output_text)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

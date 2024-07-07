@@ -1,1 +1,3 @@
 pyinstaller --onefile --windowed --name "Auto Pulse" --add-data "icon.ico;." --icon="icon.ico" main.py
+
+pyinstaller --onefile --noconsole --icon=icon.ico --add-data "icon.ico;." --name "Auto Pulse" main.py
